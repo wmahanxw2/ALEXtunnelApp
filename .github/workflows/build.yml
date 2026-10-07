@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       upstream_ref:
-        description: "v2rayNG tag or branch to build on (example 2.2.3)"
-        default: "2.2.3"
+        description: "v2rayNG tag or branch (leave empty for the latest code)"
+        default: ""
   push:
     branches: [main]
 
@@ -23,9 +23,19 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: 2dust/v2rayNG
-          ref: ${{ github.event.inputs.upstream_ref || '2.2.3' }}
+          ref: ${{ github.event.inputs.upstream_ref }}
           path: upstream
           submodules: recursive
+
+      - name: Download latest Xray core (libv2ray.aar)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p upstream/V2rayNG/app/libs
+          rm -f upstream/V2rayNG/app/libs/*.aar
+          gh release download --repo 2dust/AndroidLibXrayLite --pattern "*.aar" \
+            --dir upstream/V2rayNG/app/libs --clobber
+          ls -la upstream/V2rayNG/app/libs
 
       - uses: actions/setup-java@v4
         with:

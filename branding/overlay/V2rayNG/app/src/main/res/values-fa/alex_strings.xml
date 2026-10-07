@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alex_nav_home">خانه</string>
+    <string name="alex_nav_configs">کانفیگ‌ها</string>
+    <string name="alex_nav_subs">اشتراک‌ها</string>
+    <string name="alex_nav_logs">لاگ‌ها</string>
+    <string name="alex_nav_more">بیشتر</string>
+    <string name="alex_brand_alex">ALEX</string>
+    <string name="alex_brand_tunnel">Tunnel</string>
+    <string name="alex_tag_fast">سریع</string>
+    <string name="alex_tag_secure">امن</string>
+    <string name="alex_tag_free">رایگان</string>
+    <string name="alex_status_connected">متصل شد</string>
+    <string name="alex_status_disconnected">متصل نیست</string>
+    <string name="alex_active_config">کانفیگ فعال</string>
+    <string name="alex_no_config">کانفیگی انتخاب نشده. برای انتخاب بزن.</string>
+    <string name="alex_ping">پینگ</string>
+    <string name="alex_downlink">دانلود</string>
+    <string name="alex_uplink">آپلود</string>
+    <string name="alex_stay_connected">متصل بمان</string>
+    <string name="alex_acc_menu">باز کردن منو</string>
+    <string name="alex_acc_support">پشتیبانی</string>
+    <string name="alex_acc_power_on">اتصال</string>
+    <string name="alex_acc_power_off">قطع اتصال</string>
+</resources>

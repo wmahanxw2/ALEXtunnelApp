@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alex_nav_home">Home</string>
+    <string name="alex_nav_configs">Configs</string>
+    <string name="alex_nav_subs">Subs</string>
+    <string name="alex_nav_logs">Logs</string>
+    <string name="alex_nav_more">More</string>
+    <string name="alex_brand_alex">ALEX</string>
+    <string name="alex_brand_tunnel">Tunnel</string>
+    <string name="alex_tag_fast">Fast</string>
+    <string name="alex_tag_secure">Secure</string>
+    <string name="alex_tag_free">Free</string>
+    <string name="alex_status_connected">CONNECTED</string>
+    <string name="alex_status_disconnected">NOT CONNECTED</string>
+    <string name="alex_active_config">Active Configuration</string>
+    <string name="alex_no_config">No configuration selected. Tap to choose one.</string>
+    <string name="alex_ping">PING</string>
+    <string name="alex_downlink">Downlink</string>
+    <string name="alex_uplink">Uplink</string>
+    <string name="alex_stay_connected">STAY CONNECTED</string>
+    <string name="alex_acc_menu">Open menu</string>
+    <string name="alex_acc_support">Support</string>
+    <string name="alex_acc_power_on">Connect</string>
+    <string name="alex_acc_power_off">Disconnect</string>
+</resources>

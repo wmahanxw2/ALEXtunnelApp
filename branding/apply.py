@@ -70,13 +70,15 @@ for f in glob.glob(res + "/values/themes.xml") + glob.glob(res + "/values/styles
     if s != o: write(f, s)
 
 # 4) launcher icon from the logo (drop adaptive/webp variants so the png wins)
-for f in glob.glob(res + "/mipmap-*/ic_launcher*"):
-    os.remove(f)
+# the code also references R.mipmap.ic_launcher_foreground (drawer header), so it must keep existing
+for pat in ("ic_launcher.*", "ic_launcher_round.*", "ic_launcher_foreground.*"):
+    for f in glob.glob(res + "/mipmap-*/" + pat):
+        os.remove(f)
 logo = Image.open(os.path.join(HERE, "logo.png")).convert("RGB")
 sizes = {"mdpi": 48, "hdpi": 72, "xhdpi": 96, "xxhdpi": 144, "xxxhdpi": 192}
 for d, px in sizes.items():
     out = os.path.join(res, "mipmap-" + d); os.makedirs(out, exist_ok=True)
-    sq = logo.resize((px, px), Image.LANCZOS); sq.save(out + "/ic_launcher.png")
+    sq = logo.resize((px, px), Image.LANCZOS); sq.save(out + "/ic_launcher.png"); sq.save(out + "/ic_launcher_foreground.png")
     big = logo.resize((px * 4, px * 4), Image.LANCZOS)
     mask = Image.new("L", big.size, 0); ImageDraw.Draw(mask).ellipse((0, 0) + big.size, fill=255)
     rd = Image.new("RGBA", big.size, (0, 0, 0, 0)); rd.paste(big, (0, 0), mask)

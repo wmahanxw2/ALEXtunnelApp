@@ -1,10 +1,13 @@
-name: Build Android APK
+name: Build ALEX tunnel APK
 
 on:
   workflow_dispatch:
+    inputs:
+      upstream_ref:
+        description: "v2rayNG tag or branch to build on (example 2.2.3)"
+        default: "2.2.3"
   push:
-    branches:
-      - main
+    branches: [main]
 
 permissions:
   contents: write
@@ -12,36 +15,59 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
+      - name: Checkout branding
         uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
+      - name: Checkout v2rayNG (upstream, GPLv3)
+        uses: actions/checkout@v4
+        with:
+          repository: 2dust/v2rayNG
+          ref: ${{ github.event.inputs.upstream_ref || '2.2.3' }}
+          path: upstream
+          submodules: recursive
+
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: "17"
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.7'
+      - uses: android-actions/setup-android@v3
+
+      - name: Apply ALEX tunnel branding
+        run: |
+          pip install pillow
+          python3 branding/apply.py upstream
+
+      - name: Native tunnel (only if upstream needs it)
+        run: |
+          if [ -f upstream/compile-hevtun.sh ]; then
+            export NDK_HOME="${ANDROID_NDK_HOME:-$ANDROID_HOME/ndk-bundle}"
+            cd upstream && bash compile-hevtun.sh
+          else
+            echo "no native step"
+          fi
 
       - name: Build APK
-        run: gradle assembleDebug
+        working-directory: upstream/V2rayNG
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleFdroidDebug --no-daemon || ./gradlew assembleDebug --no-daemon
 
-      - name: Upload APK Artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: ALEX-Tunnel-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: ALEX-tunnel-apk
+          path: upstream/V2rayNG/app/build/outputs/apk/**/*.apk
 
-      - name: Publish APK to GitHub Release
+      - name: Publish release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "v1.0.${{ github.run_number }}" \
-            app/build/outputs/apk/debug/app-debug.apk \
-            --title "ALEX Tunnel v1.0.${{ github.run_number }}" \
-            --generate-notes
+          mkdir -p out
+          i=0
+          for f in $(find upstream/V2rayNG/app/build/outputs/apk -name "*.apk"); do
+            i=$((i+1)); cp "$f" "out/ALEX-tunnel-v1.0.${{ github.run_number }}-$i.apk"
+          done
+          gh release create "v1.0.${{ github.run_number }}" out/*.apk --repo "${{ github.repository }}" \
+            --title "ALEX Tunnel v1.0.${{ github.run_number }}" --generate-notes

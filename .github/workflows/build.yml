@@ -47,10 +47,28 @@ jobs:
           fi
 
       - name: Build APK
+        shell: bash
         working-directory: upstream/V2rayNG
         run: |
           chmod +x gradlew
-          ./gradlew assembleFdroidDebug --no-daemon || ./gradlew assembleDebug --no-daemon
+          export GRADLE_OPTS="-Dorg.gradle.jvmargs=-Xmx4g -Dkotlin.daemon.jvm.options=-Xmx3g"
+          if ! ./gradlew assembleFdroidDebug --no-daemon > ../../build.log 2>&1; then
+            echo "fdroid build failed, trying all flavors"
+            ./gradlew assembleDebug --no-daemon >> ../../build.log 2>&1 || true
+          fi
+          if ! find app/build/outputs/apk -name "*.apk" | grep -q .; then
+            echo "=== ERRORS ==="
+            grep -E "^e: |What went wrong" -A3 ../../build.log | head -60
+            exit 1
+          fi
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
+          if-no-files-found: ignore
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
